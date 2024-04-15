@@ -26,6 +26,27 @@ type Times struct {
 	completedWaves int
 }
 
+type FormattedTimes struct {
+	Wave1  string
+	Wave2  string
+	Wave3  string
+	Wave4  string
+	Wave5  string
+	Wave6  string
+	Wave7  string
+	Wave8  string
+	Wave9  string
+	Wave10 string
+	Wave11 string
+	Wave12 string
+	Total  string
+}
+
+type Splits struct {
+	PB        FormattedTimes
+	SumOfBest FormattedTimes
+}
+
 type timesChannel chan Times
 
 func iterateWaves(file *os.File) Times {
@@ -120,15 +141,33 @@ func (t *Times) getBestWaveTime(currentTimes Times) {
 	t.total = t.wave1 + t.wave2 + t.wave3 + t.wave4 + t.wave5 + t.wave6 + t.wave7 + t.wave8 + t.wave9 + t.wave10 + t.wave11 + t.wave12
 }
 
-func convertTicks(ticks int) {
+func convertTicks(ticks int) string {
 	minutes := int((float64(ticks) * 0.6) / 60.0)
 	seconds := int(math.Mod(float64(ticks)*0.6, 60.0))
 	remainderTick := math.Mod(float64(ticks)*0.6, 60.0) - math.Floor(math.Mod(float64(ticks)*0.6, 60.0))
 	remainderTick = math.Round(remainderTick * 10)
-	fmt.Printf("%02d:%02d.%v\n", minutes, seconds, int(remainderTick))
+	return fmt.Sprintf("%02d:%02d.%v0\n", minutes, seconds, int(remainderTick))
 }
 
-func readTimes(timesChan timesChannel) {
+func (t Times) formatTimes() FormattedTimes {
+	return FormattedTimes{
+		Wave1:  convertTicks(t.wave1),
+		Wave2:  convertTicks(t.wave2),
+		Wave3:  convertTicks(t.wave3),
+		Wave4:  convertTicks(t.wave4),
+		Wave5:  convertTicks(t.wave5),
+		Wave6:  convertTicks(t.wave6),
+		Wave7:  convertTicks(t.wave7),
+		Wave8:  convertTicks(t.wave8),
+		Wave9:  convertTicks(t.wave9),
+		Wave10: convertTicks(t.wave10),
+		Wave11: convertTicks(t.wave11),
+		Wave12: convertTicks(t.wave12),
+		Total:  convertTicks(t.total),
+	}
+}
+
+func readTimes(timesChan timesChannel) (Times, Times) {
 	pbTimes := Times{
 		total: 100000,
 	}
@@ -152,8 +191,5 @@ func readTimes(timesChan timesChannel) {
 		}
 		sumOfBestTimes.getBestWaveTime(times)
 	}
-	fmt.Println(pbTimes)
-	convertTicks(pbTimes.total)
-	fmt.Println(sumOfBestTimes)
-	convertTicks(sumOfBestTimes.total)
+	return pbTimes, sumOfBestTimes
 }

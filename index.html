@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Colo Splits</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+        <style>
+            /* Additional styling to center content and manage widths */
+            .centered-content {
+                max-width: 800px; /* Set a max-width for the content */
+                margin-left: auto;
+                margin-right: auto;
+                padding: 10px; /* Add some padding around the content */
+            }
+        </style>
+    </head>
+    <body class="bg-gray-100">
+        <div class="centered-content mt-10">
+            <h1 class="text-3xl font-bold text-center mb-4">
+                Fortis Colosseum Splits
+            </h1>
+            <div>
+                <button
+                    class="centered-content flex justify-between"
+                    hx-get="/splits"
+                    hx-swap="outerHTML"
+                >
+                    Click Me
+                </button>
+            </div>
+        </div>
+    </body>
+</html>

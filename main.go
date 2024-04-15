@@ -1,9 +1,16 @@
 package main
 
+import (
+	"fmt"
+	"log"
+	"net/http"
+)
+
 func main() {
-	fileChan := make(fileChannel)
-	timesChan := make(timesChannel)
-	go pushFiles("splits/", fileChan)
-	go readFiles(fileChan, timesChan)
-	readTimes(timesChan)
+	http.HandleFunc("/splits", splitsHandler)
+	http.HandleFunc("/", rootHandler)
+
+	port := ":8080"
+	fmt.Printf("Server is listening on %s...\n", port)
+	log.Fatal(http.ListenAndServe(port, nil))
 }
