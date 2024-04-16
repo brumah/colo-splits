@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"math"
-	"os"
+	"mime/multipart"
 	"strconv"
 	"strings"
 )
@@ -49,7 +49,7 @@ type Splits struct {
 
 type timesChannel chan Times
 
-func iterateWaves(file *os.File) Times {
+func iterateWaves(file multipart.File) Times {
 	scanner := bufio.NewScanner(file)
 
 	var times Times

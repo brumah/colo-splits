@@ -2,32 +2,28 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
+	"mime/multipart"
 )
 
-type fileChannel chan *os.File
+type fileChannel chan multipart.File
 
-func pushFiles(folderPath string, fileChan fileChannel) {
-	defer close(fileChan)
-	err := filepath.Walk(folderPath, func(path string, info os.FileInfo, err error) error {
-		if filepath.Ext(path) == ".txt" {
-			file, err := os.Open(path)
+func pushFiles(files []*multipart.FileHeader, testChan fileChannel) {
+	defer close(testChan)
+	for _, fileHeader := range files {
+		if fileHeader != nil {
+			file, err := fileHeader.Open()
 			if err != nil {
-				return err
+				fmt.Println("Error opening the file:", err)
+				continue
 			}
-			fileChan <- file
+			testChan <- file
 		}
-		return nil
-	})
-	if err != nil {
-		fmt.Printf("Error walking the directory: %v\n", err)
 	}
 }
 
-func readFiles(fileChan fileChannel, timesChan timesChannel) {
+func readFiles(testChan fileChannel, timesChan timesChannel) {
 	defer close(timesChan)
-	for file := range fileChan {
+	for file := range testChan {
 		defer file.Close()
 		timesChan <- iterateWaves(file)
 	}
