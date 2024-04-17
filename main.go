@@ -14,6 +14,7 @@ var (
 
 func main() {
 	defer close(handleChannel)
+	defer close(readyChannel)
 
 	http.Handle("/", http.TimeoutHandler(http.HandlerFunc(rootHandler), 10*time.Second, "Request timed out"))
 	http.Handle("/upload", http.TimeoutHandler(http.HandlerFunc(uploadHandler), 10*time.Second, "Request timed out"))
